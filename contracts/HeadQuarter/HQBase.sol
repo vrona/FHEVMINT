@@ -4,10 +4,11 @@ pragma solidity ^0.8.19;
 
 import { IRMRights } from "./IRMRights.sol";
 import "fhevm/lib/TFHE.sol";
+import "fhevm/gateway/GatewayCaller.sol";
 import { IOperation } from "../interfaces/IOperation.sol";
 import { IEngine } from "../interfaces/IEngine.sol";
 
-abstract contract HQBase is IRMRights {
+abstract contract HQBase is IRMRights, GatewayCaller {
     IEngine Engine;
 
     struct SourceCollection {
@@ -52,10 +53,24 @@ abstract contract HQBase is IRMRights {
         Engine = engine;
     }
 
+    // TO REPLACE
+    // // Needs to implement Input Code UI to trigger Mission Creation Button
+    // function operationActiveCheck(address operationAddress, uint256 opTokenId, euint16 codeSuggested) internal {
+    //     euint16 opCodeActive = getActiveOperation(operationAddress, opTokenId);
+    //     ebool isCodeEqual = TFHE.eq(opCodeActive, codeSuggested);
+    //     bool isLaunchActivated = TFHE.decrypt(isCodeEqual);
+    //     if (isLaunchActivated) {
+    //         emit isActivated();
+    //     } else {
+    //         emit isUnActivated();
+    //     }
+    // }
+
     // Needs to implement Input Code UI to trigger Mission Creation Button
     function operationActiveCheck(address operationAddress, uint256 opTokenId, euint16 codeSuggested) internal {
         euint16 opCodeActive = getActiveOperation(operationAddress, opTokenId);
         ebool isCodeEqual = TFHE.eq(opCodeActive, codeSuggested);
+        TFHE.allow(isCodeEqual, address(this));
         bool isLaunchActivated = TFHE.decrypt(isCodeEqual);
         if (isLaunchActivated) {
             emit isActivated();
@@ -63,6 +78,20 @@ abstract contract HQBase is IRMRights {
             emit isUnActivated();
         }
     }
+
+    // NEW NEW
+
+    function requestBool(ebool xBool) public {
+        uint256[] memory cts = new uint256[](1);
+        cts[0] = Gateway.toUint256(xBool);
+        Gateway.requestDecryption(cts, this.myCustomCallback.selector, 0, block.timestamp + 100, false);
+    }
+
+    function myCustomCallback(uint256 /*requestID*/, bool decryptedInput) public onlyGateway returns (bool) {
+        bool yBool = decryptedInput;
+        return yBool;
+    }
+    // ^^^ NEW NEW ^^^
 
     function addOperationAddr(address operationAddress) public onlyRole(majorRANK) {
         arrayOfOperation.push(operationAddress);

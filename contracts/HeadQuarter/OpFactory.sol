@@ -110,8 +110,11 @@ contract OpFactory is ERC721, ERC721URIStorage, IOperation, IRMRights {
 
     // ENCRYPT
     // operationKey #Front add
-    function opKey(uint256 opTokenId, bytes calldata keytoencrypt) internal onlyRole(majorRANK) {
-        storeOpKey(opTokenId, TFHE.asEuint32(keytoencrypt));
+    // function opKey(uint256 opTokenId, bytes calldata keytoencrypt) internal onlyRole(majorRANK) {
+    //     storeOpKey(opTokenId, TFHE.asEuint32(keytoencrypt));
+    // }
+    function opKey(uint256 opTokenId, einput keytoencrypt, bytes calldata inputProof) internal onlyRole(majorRANK) {
+        storeOpKey(opTokenId, TFHE.asEuint32(keytoencrypt, inputProof));
     }
 
     function storeOpKey(uint256 opTokenId, euint32 operationCipherKEY) internal onlyRole(majorRANK) {
@@ -119,8 +122,12 @@ contract OpFactory is ERC721, ERC721URIStorage, IOperation, IRMRights {
     }
 
     // To Activate Operation
-    function opSecretActive(uint256 opTokenId, bytes calldata codetoencrypt) internal onlyRole(majorRANK) {
-        storeOpSecretActive(opTokenId, TFHE.asEuint16(codetoencrypt));
+    function opSecretActive(
+        uint256 opTokenId,
+        einput codetoencrypt,
+        bytes calldata inputProof
+    ) internal onlyRole(majorRANK) {
+        storeOpSecretActive(opTokenId, TFHE.asEuint16(codetoencrypt, inputProof));
     }
 
     function storeOpSecretActive(uint256 opTokenId, euint16 codeCipherKEY) internal onlyRole(majorRANK) {

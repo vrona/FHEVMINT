@@ -103,8 +103,12 @@ contract HumInt is ERC721, ERC721URIStorage, IHumInt, IRMRights {
 
     // ENCRYPT
     // missionKey #Front add
-    function mission_Key(uint256 missionTokenId, bytes calldata keytoencrypt) internal onlyRole(intelOfficerRANK) {
-        storeMissionKey(missionTokenId, TFHE.asEuint32(keytoencrypt));
+    function mission_Key(
+        uint256 missionTokenId,
+        einput keytoencrypt,
+        bytes calldata inputProof
+    ) internal onlyRole(intelOfficerRANK) {
+        storeMissionKey(missionTokenId, TFHE.asEuint32(keytoencrypt, inputProof));
     }
 
     function storeMissionKey(uint256 missionTokenId, euint32 missionCipherKEY) internal {
