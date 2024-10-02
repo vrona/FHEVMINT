@@ -11,6 +11,8 @@ import { IEngine } from "../interfaces/IEngine.sol";
 abstract contract HQBase is IRMRights, GatewayCaller {
     IEngine Engine;
 
+    ebool isCodeEqual; // Code UI to trigger Mission Creation Button
+
     struct SourceCollection {
         euint16 operationCodeActive;
         uint8 unitengaged;
@@ -53,43 +55,33 @@ abstract contract HQBase is IRMRights, GatewayCaller {
         Engine = engine;
     }
 
-    // TO REPLACE
-    // // Needs to implement Input Code UI to trigger Mission Creation Button
-    // function operationActiveCheck(address operationAddress, uint256 opTokenId, euint16 codeSuggested) internal {
-    //     euint16 opCodeActive = getActiveOperation(operationAddress, opTokenId);
-    //     ebool isCodeEqual = TFHE.eq(opCodeActive, codeSuggested);
-    //     bool isLaunchActivated = TFHE.decrypt(isCodeEqual);
-    //     if (isLaunchActivated) {
-    //         emit isActivated();
-    //     } else {
-    //         emit isUnActivated();
-    //     }
-    // }
-
     // Needs to implement Input Code UI to trigger Mission Creation Button
-    function operationActiveCheck(address operationAddress, uint256 opTokenId, euint16 codeSuggested) internal {
+    function operationActiveCheck(
+        address operationAddress,
+        uint256 opTokenId,
+        euint16 codeSuggested
+    ) internal returns (ebool) {
         euint16 opCodeActive = getActiveOperation(operationAddress, opTokenId);
-        ebool isCodeEqual = TFHE.eq(opCodeActive, codeSuggested);
+        isCodeEqual = TFHE.eq(opCodeActive, codeSuggested);
         TFHE.allow(isCodeEqual, address(this));
-        bool isLaunchActivated = TFHE.decrypt(isCodeEqual);
-        if (isLaunchActivated) {
-            emit isActivated();
-        } else {
-            emit isUnActivated();
-        }
+        TFHE.allow(isCodeEqual, msg.sender);
+        //bool isLaunchActivated = opActiveCheckCallBack(); //TFHE.decrypt(isCodeEqual);
+        // uint256[] memory cts = new uint256[](1);
+        // cts[0] = Gateway.toUint256(isCodeEqual);
+        // Gateway.requestDecryption(cts, this.opActiveCheckCallBack.selector, 0, block.timestamp + 100, false);
+
+        // // if (isLaunchActivated) {
+        // //     emit isActivated();
+        // // } else {
+        // //     emit isUnActivated();
+        // // }
+        return isCodeEqual;
     }
 
     // NEW NEW
-
-    function requestBool(ebool xBool) public {
-        uint256[] memory cts = new uint256[](1);
-        cts[0] = Gateway.toUint256(xBool);
-        Gateway.requestDecryption(cts, this.myCustomCallback.selector, 0, block.timestamp + 100, false);
-    }
-
-    function myCustomCallback(uint256 /*requestID*/, bool decryptedInput) public onlyGateway returns (bool) {
-        bool yBool = decryptedInput;
-        return yBool;
+    // Decrypted boolean Mission Creation
+    function opActiveCheckCallBack(uint256 /*requestId*/, bool decryptedInput) public view onlyGateway returns (bool) {
+        return decryptedInput;
     }
     // ^^^ NEW NEW ^^^
 
