@@ -61,6 +61,7 @@ abstract contract Engine {
 
     /**
      * @notice checking which unit is engaged from a decoded 8bits number.
+     * IF ON-CHAIN, needs to cast this function into encrypted one.
      */
     function focusOnUnitEngagement(uint8 unitEngaged, uint8 slot) internal pure returns (bool feedback) {
         if (slot == 0) {

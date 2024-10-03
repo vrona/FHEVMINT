@@ -16,16 +16,26 @@ interface IHQBase {
     }
 
     // about storage
-    function addOperationAddr(address operationAddress) external;
+    function addOperationToArray(address operationAddress) external;
     function getOperationAddr(uint256 index) external view returns (address);
-    function addADDRMissToOp(address operationAddress, address missionAddress) external;
+    function addADDRMissionToOperation(address operationAddress, address missionAddress) external;
     // about struct Source Collection
-    function addUnitEngaged(address operationAddress, uint256 opTokenId, uint8 unitengaged) external;
-    function getUnitEngaged(address operationAddress, uint256 opTokenId) external view returns (uint8 unitengaged);
+    function addIntelUnitEngaged(address operationAddress, uint256 opTokenId, uint8 unitengaged) external;
+    function getIntelUnitEngaged(address operationAddress, uint256 opTokenId) external view returns (uint8 unitengaged);
     function addOpCodeActive(address operationAddress, uint256 opTokenId, euint16 opCodeActive) external;
     function getOpCodeActive(address operationAddress, uint256 operationID) external view returns (euint16);
-    function addSourceTokenId(address operationAddress, uint256 opTokenId, uint8 slot, uint256 missionTokenId) external;
+    function addMissionTokenIdToSource(
+        address operationAddress,
+        uint256 opTokenId,
+        uint8 slot,
+        uint256 missionTokenId
+    ) external;
     function getSourceHashSlot(address operationAddress, uint256 opTokenId) external view returns (uint64);
+    function getMissionTokenIdOfSource(
+        address operationAddress,
+        uint256 opTokenId,
+        uint8 source
+    ) external view returns (uint256[] memory);
 }
 
 /*

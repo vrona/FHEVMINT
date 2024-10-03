@@ -15,7 +15,7 @@ abstract contract HQBase is IRMRights, GatewayCaller {
 
     struct SourceCollection {
         euint16 operationCodeActive;
-        uint8 unitengaged;
+        uint8 intelUnitEngaged;
         mapping(uint256 => uint256[]) sourceArray; // 0 humint, 1 sigint, 2 geoint, 3 cybint, 4 osint, 5 masint, 6 finint, 7 imint
     }
     // Principle
@@ -25,19 +25,18 @@ abstract contract HQBase is IRMRights, GatewayCaller {
     Human sources
     */
     //_contextSuffixLengthIOperation.SourceCollection opSourceCollection;
+
     // retrieve NFT OPERATION - Address MISSION NFT ARRAYS
-    mapping(address => address[]) mapOpAddrToMissAddr;
+    mapping(address => address[]) mapOperationAddressToMissionAddress;
     euint16[] internal humansources;
 
     // store all operation contract in array;
     address[] public arrayOfOperation;
-    // store all operation tokenId for each operation contract
-    mapping(address => uint256) mapOpAddrToOpTokenID;
 
     // store uint8 UnitEngaged for each Op Token Id of a given Op Contract fromOpAddrToUnitEngaged[OpFactory][OperationTokenID]
     // mapping(address => mapping(uint256 => uint8)) fromOpAddrToUnitEngaged;
 
-    // store struct SourceCollection for a given Op TokenId of a given Op Contract mapOpToSourceCollection[OperationContractAddress][OperationTokenID]
+    // store struct SourceCollection for a given Operation TokenId of a given Operation Contract mapOpToSourceCollection[OperationContractAddress][OperationTokenID]
     mapping(address => mapping(uint256 => SourceCollection)) mapOpToSourceCollection;
     // store Op Add to Mission Add
     // mapping(address => address[]) operationToMission;
@@ -48,8 +47,8 @@ abstract contract HQBase is IRMRights, GatewayCaller {
     }
 
     // events to enable or not the mint.
-    event isActivated();
-    event isUnActivated();
+    // event isActivated();
+    // event isUnActivated();
 
     constructor(IEngine engine) {
         Engine = engine;
@@ -78,14 +77,7 @@ abstract contract HQBase is IRMRights, GatewayCaller {
         return isCodeEqual;
     }
 
-    // NEW NEW
-    // Decrypted boolean Mission Creation
-    function opActiveCheckCallBack(uint256 /*requestId*/, bool decryptedInput) public view onlyGateway returns (bool) {
-        return decryptedInput;
-    }
-    // ^^^ NEW NEW ^^^
-
-    function addOperationAddr(address operationAddress) public onlyRole(majorRANK) {
+    function addOperationToArray(address operationAddress) public onlyRole(majorRANK) {
         arrayOfOperation.push(operationAddress);
     }
 
@@ -93,27 +85,32 @@ abstract contract HQBase is IRMRights, GatewayCaller {
         return arrayOfOperation[index];
     }
 
-    function addADDRMissToOp(address operationAddress, address missionAddress) public onlyMajorIntelOfficer {
-        mapOpAddrToMissAddr[operationAddress].push(missionAddress);
+    function addADDRMissionToOperation(address operationAddress, address missionAddress) public onlyMajorIntelOfficer {
+        mapOperationAddressToMissionAddress[operationAddress].push(missionAddress);
     }
 
     /**
      * @notice About struct SourceCollection
      */
 
-    // add unitengaged
-    function addUnitEngaged(address operationAddress, uint256 opTokenId, uint8 unitengaged) public onlyRole(majorRANK) {
-        mapOpToSourceCollection[operationAddress][opTokenId].unitengaged = unitengaged;
+    // add intelUnitEngaged
+    function addIntelUnitEngaged(
+        address operationAddress,
+        uint256 opTokenId,
+        uint8 intelUnitEngaged
+    ) public onlyRole(majorRANK) {
+        mapOpToSourceCollection[operationAddress][opTokenId].intelUnitEngaged = intelUnitEngaged;
     }
 
     // get source collection hashes from struct SourceCollection
-    function getUnitEngaged(
+    function getIntelUnitEngaged(
         address operationAddress,
         uint256 opTokenId
     ) public view onlyRole(majorRANK) returns (uint8) {
-        return mapOpToSourceCollection[operationAddress][opTokenId].unitengaged;
+        return mapOpToSourceCollection[operationAddress][opTokenId].intelUnitEngaged;
     }
 
+    // add a Secret code indicating operation Active status
     function addOpCodeActive(
         address operationAddress,
         uint256 opTokenId,
@@ -122,6 +119,7 @@ abstract contract HQBase is IRMRights, GatewayCaller {
         mapOpToSourceCollection[operationAddress][opTokenId].operationCodeActive = opCodeActive;
     }
 
+    // get the Secret code indicating operation Active status
     function getOpCodeActive(
         address operationAddress,
         uint256 opTokenId
@@ -129,6 +127,7 @@ abstract contract HQBase is IRMRights, GatewayCaller {
         return mapOpToSourceCollection[operationAddress][opTokenId].operationCodeActive;
     }
 
+    // get active operation list
     function getActiveOperation(
         address operationAddress,
         uint256 operationID
@@ -138,14 +137,14 @@ abstract contract HQBase is IRMRights, GatewayCaller {
     }
 
     // add Mission TokenId to SourceCollection struct
-    function addSourceTokenId(
+    function addMissionTokenIdToSource(
         address operationAddress,
         uint256 opTokenId,
         uint8 source,
         uint256 missionTokenId
     ) public onlyMajorIntelOfficer {
         // current SourceCollection
-        uint8 unitEngaged = mapOpToSourceCollection[operationAddress][opTokenId].unitengaged;
+        uint8 unitEngaged = mapOpToSourceCollection[operationAddress][opTokenId].intelUnitEngaged;
 
         // checking unit engagement bool
         if (Engine.focusOnUnitEngagement(unitEngaged, source)) {
@@ -154,7 +153,8 @@ abstract contract HQBase is IRMRights, GatewayCaller {
         }
     }
 
-    function getSourceTokenId(
+    // get all the missions' tokenId's of a source for a given Operation Address, Operation Token Id
+    function getMissionTokenIdOfSource(
         address operationAddress,
         uint256 opTokenId,
         uint8 source

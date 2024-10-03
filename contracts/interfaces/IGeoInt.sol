@@ -85,6 +85,11 @@ interface IGeoInt {
         uint32 longitude; // single-precision float
     }
 
+    /* here the UAVSource contains
+    - data of Operation + mission + officer Id + hardware Id
+    - data which can be encrypted and then on which HE can be done (updated by others Intel Unit or Field Unit)
+    - storage of contents
+    */
     struct UAVSource {
         uint256 operationTokenId; // #fhEVM
         uint256 missionTokenId; // #fhEVM
