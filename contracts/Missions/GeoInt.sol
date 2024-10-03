@@ -58,7 +58,7 @@ contract GeoInt is ERC721, ERC721URIStorage, IGeoInt, IRMRights {
 
     // NFT mission creation (mint) CAN ONLY BE if operationActiveCheck() is true (Major must have share the Mission's Active Code).
     function createMission(address operationAddress, uint256 operationTokenId) public onlyRole(intelOfficerRANK) {
-        uint8 unitEngaged = HQBase.getUnitEngaged(operationAddress, operationTokenId);
+        uint8 unitEngaged = HQBase.getIntelUnitEngaged(operationAddress, operationTokenId);
         require(Engine.focusOnUnitEngagement(unitEngaged, 2), "Unit not engaged"); // 2 is indice of GEOINT
         uint256 missiontokenID = geoIntSource.length;
 
@@ -70,7 +70,7 @@ contract GeoInt is ERC721, ERC721URIStorage, IGeoInt, IRMRights {
 
     // add mission token Id to central database : HQBase
     function addSourceToOp(address operationAddress, uint256 opTokenId, uint256 missionTokenId) public {
-        HQBase.addSourceTokenId(operationAddress, opTokenId, 2, missionTokenId); // 2 is indice of GEOINT
+        HQBase.addMissionTokenIdToSource(operationAddress, opTokenId, 2, missionTokenId); // 2 is indice of GEOINT
     }
 
     // mint the Mission NFT

@@ -69,20 +69,15 @@ interface IGeoInt {
         uint8 boat;
     }
 
-    // struct MilitaryEquipmentDefense {
-    //     uint8 combatAircraft;
-    //     uint8 radarAircraft;
-    //     uint8 boat;
-    //     uint8 submarine;
-    //     uint8 roadCheckPoint;
-    //     uint8 antiAirThreat;
-    //     uint8 antiShip;
-    //     uint8 antiSubmarine;
-    // }
-
-    struct LatLong {
-        uint32 latitude; // single-precision float
-        uint32 longitude; // single-precision float
+    struct MilitaryEquipmentDefense {
+        uint8 combatAircraft;
+        uint8 radarAircraft;
+        uint8 boat;
+        uint8 submarine;
+        uint8 roadCheckPoint;
+        uint8 antiAirThreat;
+        uint8 antiShip;
+        uint8 antiSubmarine;
     }
 
     /* here the UAVSource contains
@@ -97,9 +92,9 @@ interface IGeoInt {
         uint256 uavOrigin; // from SourceOrigin struct + identification number #AES
         uint256 building; // from Buildingtype struct                          #AES
         uint256 civilianEquipment; // from CivilianEquipment struct            #AES
-        euint32 militaryEquipDef; // SHOULD BE euint64 not euint32 from MilitaryEquipment + MilitaryDefenseType structs #fhEVM
+        euint64 militaryEquipDef; // MilitaryEquipment + MilitaryDefenseType structs #fhEVM
         uint256 personnel; // #AES
-        uint64 localization; // LATLONG SHOULD BE euint64 not euint32
+        euint64 localization; // GPS Lat/Long
         string[] arrayofcontent; // pictures, videos.
     }
 }

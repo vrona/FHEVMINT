@@ -54,7 +54,7 @@ contract HumInt is ERC721, ERC721URIStorage, IHumInt, IRMRights {
 
     // NFT mission creation (mint) CAN ONLY BE if operationActiveCheck() is true (Major must have share the Mission's Active Code).
     function createMission(address operationAddress, uint256 operationTokenId) public onlyRole(intelOfficerRANK) {
-        uint8 unitEngaged = HQBase.getUnitEngaged(operationAddress, operationTokenId);
+        uint8 unitEngaged = HQBase.getIntelUnitEngaged(operationAddress, operationTokenId);
         require(Engine.focusOnUnitEngagement(unitEngaged, 0), "Unit not engaged"); // 0 is indice of HUMINT
         uint256 missiontokenID = humIntSource.length;
 
@@ -66,7 +66,7 @@ contract HumInt is ERC721, ERC721URIStorage, IHumInt, IRMRights {
 
     // add mission token Id to central database : HQBase
     function addSourceToOp(address operationAddress, uint256 opTokenId, uint256 missionTokenId) public {
-        HQBase.addSourceTokenId(operationAddress, opTokenId, 0, missionTokenId); // 0 is indice of HUMINT
+        HQBase.addMissionTokenIdToSource(operationAddress, opTokenId, 0, missionTokenId); // 0 is indice of HUMINT
     }
 
     // mint the Mission NFT

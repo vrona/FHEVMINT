@@ -26,7 +26,7 @@ contract OpFactory is ERC721, ERC721URIStorage, IOperation, IRMRights {
     constructor(IOpMetadata _opMetadata, IHQBase hqBase) ERC721("INTEL_OPS", "INOPS") {
         opMetadata = _opMetadata;
         HQBase = hqBase;
-        HQBase.addOperationAddr(address(this)); // store this NFT Operation Factory
+        HQBase.addOperationToArray(address(this)); // store this NFT Operation Factory
     }
 
     function supportsInterface(
@@ -105,7 +105,7 @@ contract OpFactory is ERC721, ERC721URIStorage, IOperation, IRMRights {
 
     function storeUnitEngagement(uint256 opTokenId, uint8 _unitengaged) internal {
         metaOpData[opTokenId].unitengaged = _unitengaged;
-        HQBase.addUnitEngaged(address(this), opTokenId, _unitengaged);
+        HQBase.addIntelUnitEngaged(address(this), opTokenId, _unitengaged);
     }
 
     // ENCRYPT
