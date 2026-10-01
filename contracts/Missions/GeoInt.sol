@@ -124,10 +124,10 @@ contract GeoInt is ERC721, ERC721URIStorage, IGeoInt, IRMRights {
         einput militaryEquipDef,
         bytes calldata inputProof
     ) internal onlyIntelOpx {
-        storeMilEuipDef(missionTokenId, TFHE.asEuint32(militaryEquipDef, inputProof));
+        storeMilEuipDef(missionTokenId, TFHE.asEuint64(militaryEquipDef, inputProof));
     }
 
-    function storeMilEuipDef(uint256 missionTokenId, euint32 militaryEquipDef) internal onlyIntelOpx {
+    function storeMilEuipDef(uint256 missionTokenId, euint64 militaryEquipDef) internal onlyIntelOpx {
         geoIntSource[missionTokenId].militaryEquipDef = militaryEquipDef;
     }
 
@@ -148,7 +148,7 @@ contract GeoInt is ERC721, ERC721URIStorage, IGeoInt, IRMRights {
         geoIntSource[missionTokenId].personnel = personnel;
     }
 
-    function detectLocation(uint256 missionTokenId, uint64 localization) internal onlyIntelOpx {
+    function detectLocation(uint256 missionTokenId, euint64 localization) internal onlyIntelOpx {
         geoIntSource[missionTokenId].localization = localization;
     }
 
